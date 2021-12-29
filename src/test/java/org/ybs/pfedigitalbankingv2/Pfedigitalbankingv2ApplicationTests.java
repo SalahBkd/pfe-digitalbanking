@@ -1,0 +1,13 @@
+package org.ybs.pfedigitalbankingv2;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class Pfedigitalbankingv2ApplicationTests {
+
+    @Test
+    void contextLoads() {
+    }
+
+}

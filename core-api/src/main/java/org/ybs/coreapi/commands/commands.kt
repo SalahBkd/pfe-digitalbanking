@@ -13,3 +13,15 @@ data class CreateCustomerCommand(
         val phoneNumber : String,
         val address : String
 ):BaseCommand<String>(id)
+
+data class UpdateCustomerCommand(
+        override val id : String,
+        val name : String,
+        val email : String,
+        val phoneNumber : String,
+        val address : String
+):BaseCommand<String>(id)
+
+data class DeleteCustomerCommand(
+        override val id : String,
+):BaseCommand<String>(id)

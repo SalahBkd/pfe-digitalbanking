@@ -1,4 +1,4 @@
-package org.ybs.customercommandsside.controller;
+package org.ybs.customercommandsside.controllers;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

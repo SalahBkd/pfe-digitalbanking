@@ -54,6 +54,13 @@ public class AccountCommandController {
         return commandResponse;
     }
 
+    @DeleteMapping(path = "/delete")
+    public CompletableFuture<String> deleteAccount(@RequestBody DeleteAccountRequestDTO requestDTO) {
+        return commandGateway.send(new DeleteAccountCommand(
+                requestDTO.getAccountID()
+        ));
+    }
+
 
     @GetMapping("/eventStore/{accountID}")
     public Stream eventStore(@PathVariable String accountID){

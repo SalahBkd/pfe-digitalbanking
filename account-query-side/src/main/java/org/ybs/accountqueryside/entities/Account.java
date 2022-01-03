@@ -18,7 +18,7 @@ public class Account {
     @Enumerated(EnumType.STRING)
     private AccountStatus accountStatus;
     private String currency;
-    // TODO Eager must be fixed later, know how to reset events data in axon
-    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER)
+    // TODO probelm
+    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private Collection<Operation> operations;
 }

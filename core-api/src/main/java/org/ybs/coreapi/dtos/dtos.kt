@@ -41,4 +41,8 @@ data class DebitAccountRequestDTO(
         var currency : String = "",
 )
 
+data class DeleteAccountRequestDTO(
+        var accountID : String = "",
+)
+
 

@@ -3,21 +3,13 @@ package org.ybs.accountqueryside.services;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.eventhandling.EventHandler;
-import org.axonframework.queryhandling.QueryHandler;
 import org.springframework.stereotype.Service;
 import org.ybs.accountqueryside.entities.Account;
 import org.ybs.accountqueryside.entities.Operation;
 import org.ybs.accountqueryside.repositories.AccountRepo;
 import org.ybs.accountqueryside.repositories.OperationRepo;
 import org.ybs.coreapi.enums.OperationType;
-import org.ybs.coreapi.events.AccountActivatedEvent;
-import org.ybs.coreapi.events.AccountCreatedEvent;
-import org.ybs.coreapi.events.AccountCreditedEvent;
-import org.ybs.coreapi.events.AccountDebitedEvent;
-import org.ybs.coreapi.queries.GetAccountByIdQuery;
-import org.ybs.coreapi.queries.GetAllAccountsQuery;
-
-import java.util.List;
+import org.ybs.coreapi.events.*;
 
 @Service
 @AllArgsConstructor
@@ -80,5 +72,13 @@ public class AccountEventHandler {
 
         account.setBalance(account.getBalance() - accountDebitedEvent.getAmount());
         accountRepo.save(account);
+    }
+
+    @EventHandler
+    public void on(AccountDeletedEvent event) {
+        log.info("========================");
+        log.info("AccountDeletedEvent received");
+        Account customer = accountRepo.findById(event.getId()).get();
+        accountRepo.deleteById(customer.getId());
     }
 }

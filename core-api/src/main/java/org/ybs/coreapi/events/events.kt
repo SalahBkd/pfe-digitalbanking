@@ -55,5 +55,9 @@ data class AccountDebitedEvent(
         val date: Date
 ):BaseEvent<String>(id)
 
+data class AccountDeletedEvent(
+        override val id:String,
+):BaseEvent<String>(id)
+
 
 

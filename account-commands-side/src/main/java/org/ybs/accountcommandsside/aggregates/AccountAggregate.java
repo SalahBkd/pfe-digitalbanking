@@ -74,7 +74,7 @@ public class AccountAggregate {
     }
 
 
-    // DEBIT ACCOUNT
+    // DEBIT
     @CommandHandler // when the command is emitted in the command bus this method gets executed
     public void handle(DebitAccountCommand debitAccountCommand) {
         // TODO if(debitAccountCommand.getAmount() < 0) throw new NegativeAmountException("Amount should not be lesser than 0");
@@ -92,5 +92,18 @@ public class AccountAggregate {
         this.balance -= accountDebitedEvent.getAmount();
     }
 
+    // DELETE
+    @CommandHandler
+    public void handle(DeleteAccountCommand deleteAccountCommand) {
+        // TODO business logic
+        AggregateLifecycle.apply(new AccountDeletedEvent(
+                deleteAccountCommand.getId()
+        ));
+    }
+
+    @EventSourcingHandler
+    public void on(CustomerDeletedEvent event) {
+        this.accountID = event.getId();
+    }
 
 }

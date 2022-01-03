@@ -51,3 +51,7 @@ data class DebitAccountCommand(
         val date : Date,
 ):BaseCommand<String>(id)
 
+data class DeleteAccountCommand(
+        override val id : String,
+):BaseCommand<String>(id)
+

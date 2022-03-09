@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.eventsourcing.eventstore.EventStore;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.ybs.coreapi.commands.*;
 import org.ybs.coreapi.dtos.*;
@@ -61,9 +63,26 @@ public class AccountCommandController {
         ));
     }
 
+    @PutMapping(path = "/link")
+    public CompletableFuture<String> debitAccount(@RequestBody LinkAccountRequestDTO requestDTO) {
+        CompletableFuture<String> commandResponse = commandGateway.send(new LinkAccountCommand(
+                requestDTO.getAccountID(),
+                requestDTO.getCustomerID()
+        ));
+        return commandResponse;
+    }
 
     @GetMapping("/eventStore/{accountID}")
     public Stream eventStore(@PathVariable String accountID){
         return eventStore.readEvents(accountID).asStream();
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> exceptionHandler(Exception exception) {
+        ResponseEntity<String> entity = new ResponseEntity<>(
+                exception.getMessage(),
+                HttpStatus.INTERNAL_SERVER_ERROR
+        );
+        return entity;
     }
 }

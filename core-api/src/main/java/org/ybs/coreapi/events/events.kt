@@ -59,5 +59,10 @@ data class AccountDeletedEvent(
         override val id:String,
 ):BaseEvent<String>(id)
 
+data class AccountLinkedEvent(
+        override val id : String,
+        val customerId : String,
+):BaseEvent<String>(id)
+
 
 

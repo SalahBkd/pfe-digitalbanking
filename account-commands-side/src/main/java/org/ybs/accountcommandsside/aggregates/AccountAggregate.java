@@ -6,9 +6,14 @@ import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
 import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.ybs.accountcommandsside.repositories.CustomerRepo;
 import org.ybs.coreapi.commands.*;
 import org.ybs.coreapi.enums.AccountStatus;
 import org.ybs.coreapi.events.*;
+import org.ybs.coreapi.exceptions.CustomerDoesntExistException;
+import org.ybs.coreapi.exceptions.InsufficientBalanceException;
+import org.ybs.coreapi.exceptions.NegativeAmountException;
 
 @Aggregate
 @Slf4j
@@ -18,6 +23,9 @@ public class AccountAggregate {
     private double balance;
     private String currency;
     private AccountStatus status;
+    private String customerID;
+    @Autowired
+    private CustomerRepo customerRepo;
 
     // Needed By Axon
     public AccountAggregate() {
@@ -58,7 +66,7 @@ public class AccountAggregate {
     @CommandHandler
     public void handle(CreditAccountCommand creditAccountCommand) {
         log.info("CreditAccountCommand received");
-        // TODO if(creditAccountCommand.getAmount() < 0) throw new NegativeAmountException("amount should not be lesser than 0");
+        if(creditAccountCommand.getAmount() < 0) throw new NegativeAmountException("amount should not be lesser than 0");
         AggregateLifecycle.apply(new AccountCreditedEvent(
                 creditAccountCommand.getId(),
                 creditAccountCommand.getAmount(),
@@ -75,10 +83,11 @@ public class AccountAggregate {
 
 
     // DEBIT
-    @CommandHandler // when the command is emitted in the command bus this method gets executed
+    @CommandHandler
     public void handle(DebitAccountCommand debitAccountCommand) {
-        // TODO if(debitAccountCommand.getAmount() < 0) throw new NegativeAmountException("Amount should not be lesser than 0");
-        // TODO if(this.balance < debitAccountCommand.getAmount()) throw new InsufficientBalanceException("Insufficient Balance: " + balance + ", the amount is greater than the current account balance.");
+        log.info("DebitAccountCommand received");
+        if(debitAccountCommand.getAmount() < 0) throw new NegativeAmountException("Amount should not be lesser than 0");
+        if(this.balance < debitAccountCommand.getAmount()) throw new InsufficientBalanceException("Insufficient Balance: " + balance + ", the amount is greater than the current account balance.");
         AggregateLifecycle.apply(new AccountDebitedEvent(
                 debitAccountCommand.getId(),
                 debitAccountCommand.getAmount(),
@@ -95,6 +104,7 @@ public class AccountAggregate {
     // DELETE
     @CommandHandler
     public void handle(DeleteAccountCommand deleteAccountCommand) {
+        log.info("DeleteAccountCommand received");
         // TODO business logic
         AggregateLifecycle.apply(new AccountDeletedEvent(
                 deleteAccountCommand.getId()
@@ -104,6 +114,24 @@ public class AccountAggregate {
     @EventSourcingHandler
     public void on(CustomerDeletedEvent event) {
         this.accountID = event.getId();
+    }
+
+    // LINK
+    @CommandHandler
+    public void handle(LinkAccountCommand linkAccountCommand) {
+        log.info("LinkAccountCommand received");
+        boolean isCustomerExists = customerRepo.existsById(linkAccountCommand.getCustomerID());
+        if(!isCustomerExists) throw new CustomerDoesntExistException("Customer Doesn't Exist !");
+
+        AggregateLifecycle.apply(new AccountLinkedEvent(
+                linkAccountCommand.getId(),
+                linkAccountCommand.getCustomerID()
+        ));
+    }
+
+    @EventSourcingHandler
+    public void on(AccountLinkedEvent accountDebitedEvent) {
+        this.customerID = accountDebitedEvent.getCustomerId();
     }
 
 }

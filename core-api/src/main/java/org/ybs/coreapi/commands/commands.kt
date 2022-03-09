@@ -55,3 +55,9 @@ data class DeleteAccountCommand(
         override val id : String,
 ):BaseCommand<String>(id)
 
+
+data class LinkAccountCommand(
+        override val id : String,
+        val customerID : String,
+):BaseCommand<String>(id)
+

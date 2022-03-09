@@ -45,4 +45,9 @@ data class DeleteAccountRequestDTO(
         var accountID : String = "",
 )
 
+data class LinkAccountRequestDTO(
+        var accountID : String = "",
+        var customerID : String = "",
+)
+
 

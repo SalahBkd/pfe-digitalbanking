@@ -81,4 +81,13 @@ public class AccountEventHandler {
         Account customer = accountRepo.findById(event.getId()).get();
         accountRepo.deleteById(customer.getId());
     }
+
+    @EventHandler
+    public void on(AccountLinkedEvent accountLinkedEvent) {
+        log.info("========================");
+        log.info("AccountLinkedEvent received");
+        Account account = accountRepo.findById(accountLinkedEvent.getId()).get();
+        account.setCustomerID(accountLinkedEvent.getCustomerId());
+        accountRepo.save(account);
+    }
 }

@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.eventsourcing.eventstore.EventStore;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.ybs.coreapi.commands.CreateCustomerCommand;
 import org.ybs.coreapi.commands.DeleteCustomerCommand;
@@ -59,5 +61,14 @@ public class CustomerCommandController {
     @GetMapping("/eventStore/{customerId}")
     public Stream eventStore(@PathVariable String customerId){
         return eventStore.readEvents(customerId).asStream();
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> exceptionHandler(Exception exception) {
+        ResponseEntity<String> entity = new ResponseEntity<>(
+                exception.getMessage(),
+                HttpStatus.INTERNAL_SERVER_ERROR
+        );
+        return entity;
     }
 }

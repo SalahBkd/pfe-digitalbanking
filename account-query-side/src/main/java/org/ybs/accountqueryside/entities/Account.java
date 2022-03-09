@@ -18,7 +18,8 @@ public class Account {
     @Enumerated(EnumType.STRING)
     private AccountStatus accountStatus;
     private String currency;
-    // TODO probelm
-    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    // TODO
+    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private Collection<Operation> operations;
+    private String customerID;
 }
